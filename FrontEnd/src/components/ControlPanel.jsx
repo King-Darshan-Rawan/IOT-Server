@@ -1,23 +1,22 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+const BACKEND_URL = "https://iot-server-1-8qfl.onrender.com/control";
+
 function ControlPanel() {
   const [active, setActive] = useState("");
 
   const sendCommand = async (btn) => {
     setActive(btn);
     try {
-      await axios.post("/control", { command: btn });
-      console.log(`Sent command: ${btn}`);
+      await axios.post(BACKEND_URL, { command: btn });
+      console.log(`✅ Sent command: ${btn}`);
     } catch (err) {
-      console.error("Failed to send command:", err.message);
+      console.error("❌ Failed to send command:", err.message);
     }
   };
 
-  const handlePress = (btn) => {
-    sendCommand(btn);
-  };
-
+  const handlePress = (btn) => sendCommand(btn);
   const handleRelease = () => {
     sendCommand("stop");
     setActive("");
@@ -31,86 +30,29 @@ function ControlPanel() {
 
   return (
     <div className="grid grid-cols-3 grid-rows-3 gap-3">
-      <button
-        className={btnClass("forward-left")}
-        onMouseDown={() => handlePress("forward-left")}
-        onMouseUp={handleRelease}
-        onTouchStart={() => handlePress("forward-left")}
-        onTouchEnd={handleRelease}
-      >
-        ↖️
-      </button>
-      <button
-        className={btnClass("forward")}
-        onMouseDown={() => handlePress("forward")}
-        onMouseUp={handleRelease}
-        onTouchStart={() => handlePress("forward")}
-        onTouchEnd={handleRelease}
-      >
-        ⬆️
-      </button>
-      <button
-        className={btnClass("forward-right")}
-        onMouseDown={() => handlePress("forward-right")}
-        onMouseUp={handleRelease}
-        onTouchStart={() => handlePress("forward-right")}
-        onTouchEnd={handleRelease}
-      >
-        ↗️
-      </button>
-
-      <button
-        className={btnClass("left")}
-        onMouseDown={() => handlePress("left")}
-        onMouseUp={handleRelease}
-        onTouchStart={() => handlePress("left")}
-        onTouchEnd={handleRelease}
-      >
-        ⬅️
-      </button>
-      <button
-        className={btnClass("stop")}
-        onClick={() => sendCommand("stop")}
-      >
-        🛑
-      </button>
-      <button
-        className={btnClass("right")}
-        onMouseDown={() => handlePress("right")}
-        onMouseUp={handleRelease}
-        onTouchStart={() => handlePress("right")}
-        onTouchEnd={handleRelease}
-      >
-        ➡️
-      </button>
-
-      <button
-        className={btnClass("backward-left")}
-        onMouseDown={() => handlePress("backward-left")}
-        onMouseUp={handleRelease}
-        onTouchStart={() => handlePress("backward-left")}
-        onTouchEnd={handleRelease}
-      >
-        ↙️
-      </button>
-      <button
-        className={btnClass("backward")}
-        onMouseDown={() => handlePress("backward")}
-        onMouseUp={handleRelease}
-        onTouchStart={() => handlePress("backward")}
-        onTouchEnd={handleRelease}
-      >
-        ⬇️
-      </button>
-      <button
-        className={btnClass("backward-right")}
-        onMouseDown={() => handlePress("backward-right")}
-        onMouseUp={handleRelease}
-        onTouchStart={() => handlePress("backward-right")}
-        onTouchEnd={handleRelease}
-      >
-        ↘️
-      </button>
+      {[
+        ["forward-left", "↖️"],
+        ["forward", "⬆️"],
+        ["forward-right", "↗️"],
+        ["left", "⬅️"],
+        ["stop", "🛑"],
+        ["right", "➡️"],
+        ["backward-left", "↙️"],
+        ["backward", "⬇️"],
+        ["backward-right", "↘️"]
+      ].map(([cmd, icon]) => (
+        <button
+          key={cmd}
+          className={btnClass(cmd)}
+          onMouseDown={() => cmd !== "stop" && handlePress(cmd)}
+          onMouseUp={handleRelease}
+          onTouchStart={() => cmd !== "stop" && handlePress(cmd)}
+          onTouchEnd={handleRelease}
+          onClick={cmd === "stop" ? () => sendCommand("stop") : undefined}
+        >
+          {icon}
+        </button>
+      ))}
     </div>
   );
 }
