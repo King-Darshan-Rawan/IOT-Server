@@ -1,11 +1,26 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 function ControlPanel() {
   const [active, setActive] = useState("");
 
-  const handleClick = (btn) => {
+  const sendCommand = async (btn) => {
     setActive(btn);
-    setTimeout(() => setActive(""), 300); // Reset after 300ms
+    try {
+      await axios.post("/control", { command: btn });
+      console.log(`Sent command: ${btn}`);
+    } catch (err) {
+      console.error("Failed to send command:", err.message);
+    }
+  };
+
+  const handlePress = (btn) => {
+    sendCommand(btn);
+  };
+
+  const handleRelease = () => {
+    sendCommand("stop");
+    setActive("");
   };
 
   const btnClass = (btn) =>
@@ -16,20 +31,86 @@ function ControlPanel() {
 
   return (
     <div className="grid grid-cols-3 grid-rows-3 gap-3">
-      {/* Top Row */}
-      <button className={btnClass("forward-left")} onClick={() => handleClick("forward-left")}>↖️</button>
-      <button className={btnClass("forward")} onClick={() => handleClick("forward")}>⬆️</button>
-      <button className={btnClass("forward-right")} onClick={() => handleClick("forward-right")}>↗️</button>
+      <button
+        className={btnClass("forward-left")}
+        onMouseDown={() => handlePress("forward-left")}
+        onMouseUp={handleRelease}
+        onTouchStart={() => handlePress("forward-left")}
+        onTouchEnd={handleRelease}
+      >
+        ↖️
+      </button>
+      <button
+        className={btnClass("forward")}
+        onMouseDown={() => handlePress("forward")}
+        onMouseUp={handleRelease}
+        onTouchStart={() => handlePress("forward")}
+        onTouchEnd={handleRelease}
+      >
+        ⬆️
+      </button>
+      <button
+        className={btnClass("forward-right")}
+        onMouseDown={() => handlePress("forward-right")}
+        onMouseUp={handleRelease}
+        onTouchStart={() => handlePress("forward-right")}
+        onTouchEnd={handleRelease}
+      >
+        ↗️
+      </button>
 
-      {/* Middle Row */}
-      <button className={btnClass("left")} onClick={() => handleClick("left")}>⬅️</button>
-      <button className={btnClass("stop")} onClick={() => handleClick("stop")}>OK</button>
-      <button className={btnClass("right")} onClick={() => handleClick("right")}>➡️</button>
+      <button
+        className={btnClass("left")}
+        onMouseDown={() => handlePress("left")}
+        onMouseUp={handleRelease}
+        onTouchStart={() => handlePress("left")}
+        onTouchEnd={handleRelease}
+      >
+        ⬅️
+      </button>
+      <button
+        className={btnClass("stop")}
+        onClick={() => sendCommand("stop")}
+      >
+        🛑
+      </button>
+      <button
+        className={btnClass("right")}
+        onMouseDown={() => handlePress("right")}
+        onMouseUp={handleRelease}
+        onTouchStart={() => handlePress("right")}
+        onTouchEnd={handleRelease}
+      >
+        ➡️
+      </button>
 
-      {/* Bottom Row */}
-      <button className={btnClass("backward-left")} onClick={() => handleClick("backward-left")}>↙️</button>
-      <button className={btnClass("backward")} onClick={() => handleClick("backward")}>⬇️</button>
-      <button className={btnClass("backward-right")} onClick={() => handleClick("backward-right")}>↘️</button>
+      <button
+        className={btnClass("backward-left")}
+        onMouseDown={() => handlePress("backward-left")}
+        onMouseUp={handleRelease}
+        onTouchStart={() => handlePress("backward-left")}
+        onTouchEnd={handleRelease}
+      >
+        ↙️
+      </button>
+      <button
+        className={btnClass("backward")}
+        onMouseDown={() => handlePress("backward")}
+        onMouseUp={handleRelease}
+        onTouchStart={() => handlePress("backward")}
+        onTouchEnd={handleRelease}
+      >
+        ⬇️
+      </button>
+      <button
+        className={btnClass("backward-right")}
+        onMouseDown={() => handlePress("backward-right")}
+        onMouseUp={handleRelease}
+        onTouchStart={() => handlePress("backward-right")}
+        onTouchEnd={handleRelease}
+      >
+        ↘️
+      </button>
     </div>
   );
 }
